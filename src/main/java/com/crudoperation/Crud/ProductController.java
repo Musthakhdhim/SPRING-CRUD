@@ -2,6 +2,9 @@ package com.crudoperation.Crud;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +19,11 @@ public class ProductController {
     public ProductController(ProductService service) {
         this.service = service;
     }
+
+//    @GetMapping("/product")
+//    public ResponseEntity<List<Product>> getProductss(){
+//        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
+//    }
 
     @GetMapping("/product")
     public List<Product> getProducts(){
