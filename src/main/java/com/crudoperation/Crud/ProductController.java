@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -20,19 +21,25 @@ public class ProductController {
         this.service = service;
     }
 
-//    @GetMapping("/product")
-//    public ResponseEntity<List<Product>> getProductss(){
-//        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
-//    }
-
     @GetMapping("/product")
     public List<Product> getProducts(){
         return service.getAll();
     }
 
     @GetMapping("/product/{id}")
-    public Product getByid(@PathVariable int id){
-        return service.findByid(id);
+    public ResponseEntity<?> getByid(@PathVariable int id){
+
+            Product prod=service.findByid(id);
+            if(prod==null){
+                throw new ProductNotFound("product not found with id:"+id);
+            }
+            return new ResponseEntity<>(prod, HttpStatus.OK);
+
+//        catch(ProductNotFound e){
+//            ExceptionThrower et=new ExceptionThrower(LocalDateTime.now(), "prodcust not found");
+//            return new ResponseEntity<>(et, HttpStatus.NOT_FOUND);
+//        }
+
     }
 
     @PostMapping("/product/add")
@@ -53,5 +60,11 @@ public class ProductController {
     @DeleteMapping("/product/delete/all")
     public void deleteAll(){
         service.deleteAll();
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<?> handleProductNotfound(ProductNotFound pnf){
+        ExceptionThrower et=new ExceptionThrower(LocalDateTime.now(), pnf.getMessage());
+        return new ResponseEntity<>(et, HttpStatus.NOT_FOUND);
     }
 }
